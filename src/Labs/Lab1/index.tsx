@@ -3,6 +3,21 @@ export default function Lab1() {
         <div id="wd-lab1">
             <h2>Lab 1</h2>
             <h3>HTML Examples</h3>
+                <div id="wd-h-tag">
+                    <h4>Heading Tags</h4>
+                    Text documents are often broken up into several sections and
+subsections. Each section is usually prefaced with a short
+title or heading that attempts to summarize the topic of the
+section it precedes. For instance this paragraph is preceded by
+the heading Heading Tags. The font of the section headings are
+usually larger and bolder than their subsection headings. This
+document uses headings to introduce topics such as HTML
+Documents, HTML Tags, Heading Tags, etc. HTML heading tags can
+be used to format plain text so that it renders in a browser as
+large headings. There are 6 heading tags for different sizes:
+h1, h2, h3, h4, h5, and h6. Tag h1 is the largest heading and
+h6 is the smallest heading.
+                </div>
             <div id="wd-p-tag">
                 <h4>Paragraph Tag</h4>
                 <p id="wd-p-1">
@@ -99,12 +114,54 @@ tag to tell browsers to render the gaps.
                             <td>2/17/21</td>
                             <td>95</td>
                         </tr>
+                        <tr>
+                            <td>Q4</td>
+                            <td>Bootstrap</td>
+                            <td>2/24/21</td>
+                            <td>95</td>
+                        </tr>
+                        <tr>
+                            <td>Q5</td>
+                            <td>JavaScript & React</td>
+                            <td>3/5/21</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <td>Q6</td>
+                            <td>Routing</td>
+                            <td>3/12/21</td>
+                            <td>98</td>
+                        </tr>
+                        <tr>
+                            <td>Q7</td>
+                            <td>State & Redux</td>
+                            <td>3/19/21</td>
+                            <td>92</td>
+                        </tr>
+                        <tr>
+                            <td>Q8</td>
+                            <td>Node</td>
+                            <td>3/26/21</td>
+                            <td>93</td>
+                        </tr>
+                        <tr>
+                            <td>Q9</td>
+                            <td>Session</td>
+                            <td>4/5/21</td>
+                            <td>90</td>
+                        </tr>
+                        <tr>
+                            <td>Q10</td>
+                            <td>MongoDB</td>
+                            <td>4/12/21</td>
+                            <td>100</td>
+                        </tr>
                     </tbody>
 
                     <tfoot>
                         <tr>
                             <td colSpan={3}>Average</td>
-                            <td>90</td>
+                            <td>94</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -165,6 +222,8 @@ tag to tell browsers to render the gaps.
                         Hello World!
                     </button>
                 </form>
+                <h5>File upload</h5>
+                <input id="wd-upload" type="file"/>
             </div>
 
             
