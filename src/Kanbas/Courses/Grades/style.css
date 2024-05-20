@@ -1,0 +1,12 @@
+.table-container {
+    overflow-y: auto;
+    /* -webkit-overflow-scrolling: touch; */
+    /* Enables smooth scrolling on iOS */
+}
+
+.table {
+    width: 100%;
+    min-width: 100px;
+    min-height: 100px;
+    /* Adjust as needed to ensure a scrollable table on smaller screens */
+}
