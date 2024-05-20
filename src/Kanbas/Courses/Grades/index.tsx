@@ -5,7 +5,6 @@ import { CiSearch } from "react-icons/ci";
 import { IoIosArrowDown } from "react-icons/io";
 import { CiFilter } from "react-icons/ci";
 import ResponsiveTable from "./ResponsiveTable";
-import "./style.css";
 
 export default function Grades() {
     return (
