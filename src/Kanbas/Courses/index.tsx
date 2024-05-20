@@ -5,7 +5,6 @@ import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import Grades from "./Grades";
 import { Navigate, Route, Routes } from "react-router";
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Courses() {
     return (
