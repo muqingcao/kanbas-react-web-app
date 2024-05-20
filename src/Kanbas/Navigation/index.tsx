@@ -4,10 +4,11 @@ import { LiaBookSolid } from "react-icons/lia";
 import { HiInbox } from "react-icons/hi2";
 import { AiOutlineSetting } from "react-icons/ai";
 import { FaRegCircleUser } from "react-icons/fa6";
+import "../styles.css";
 
 export default function KanbasNavigation() {
     return (
-        <div id="wd-kanbas-navigation" className="list-group rounded-0">
+        <div id="wd-kanbas-navigation" className="list-group rounded-0" style={{ height: '1000px' }}>
             <a id="wd-neu-link" target="_blank"
                 href="https://www.northeastern.edu/"
                 className="list-group-item bg-black border-0">

@@ -24,6 +24,7 @@ body * {
 }
 
 
-#wd-kanbas-navigation {
+.wd-kanbas-navigation {
     width: 110px;
+    height: 1000%;
 }

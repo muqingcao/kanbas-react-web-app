@@ -6,8 +6,8 @@ import "./styles.css";
 
 export default function Kanbas() {
     return (
-        <div id="wd-kanbas"  className="h-100">
-            <div className="d-flex h-100">
+        <div id="wd-kanbas" className="h-200">
+            <div className="d-flex h-200">
                 <div className="d-none d-md-block bg-black">
                     <KanbasNavigation />
                 </div>
