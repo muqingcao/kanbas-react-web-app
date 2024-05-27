@@ -1,13 +1,22 @@
 import { IoIosArrowDown } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
+import { useParams, useLocation } from "react-router";
+import { Link } from 'react-router-dom';
+import { assignments } from "../../Database";
 
 export default function AssignmentEditor() {
+    const { pathname } = useLocation();
+    const course = pathname.split("/")[3];
+    const assignmentId = pathname.split("/")[5];
+    const getAssignments = assignments.find(assignment => assignment._id === assignmentId);
+    const assignmentTitle = getAssignments ? getAssignments.title : "";
+
     return (
         <div id="wd-assignments-editor" className="p-4">
             <div className="row mb-3">
                 <div className="col">
                     <label htmlFor="wd-name" className="form-label"><b>Assignment Name</b></label>
-                    <input id="wd-name" className="form-control" value="A1" />
+                    <input id="wd-name" className="form-control" value={`${assignmentId} ${assignmentTitle}`} />
                 </div>
             </div>
 
@@ -141,11 +150,19 @@ export default function AssignmentEditor() {
 
                     <hr />
                     <div className="d-flex justify-content-end">
-                        <button type="button" className="btn btn-light border mr-2 board">Cancel</button>
-                        <button type="submit" className="btn btn-danger">Save</button>
+                        <Link to={`/Kanbas/Courses/${course}/Assignments`}>
+                            <button type="button" className="btn btn-light border mr-2 board">
+                                Cancel
+                            </button>
+                        </Link>
+
+                        <Link to={`/Kanbas/Courses/${course}/Assignments`}>
+                            <button type="submit" className="btn btn-danger">Save</button>
+                        </Link>
                     </div>
                 </form>
             </div>
         </div>
     );
 }
+
