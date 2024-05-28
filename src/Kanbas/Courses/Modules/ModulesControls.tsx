@@ -43,6 +43,7 @@ export default function ModulesControls() {
                     </li>
                 </ul>
             </div>
+            
             <button id="wd-collapse-all" className="btn btn-lg btn-secondary me-1 float-end">
                 Collapse All
             </button>

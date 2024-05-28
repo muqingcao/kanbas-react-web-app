@@ -10,7 +10,7 @@ export default function Modules() {
     const courseModules = modules.filter((module) => module.course === cid);
     return (
         <div id="wd-modules">
-            <ModulesControls /><br /><br /><br />
+            <ModulesControls /><br /><br />
             <ul id="wd-modules" className="list-group rounded-0">
                 {courseModules.map((module) => (
                     <li className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
@@ -22,7 +22,7 @@ export default function Modules() {
                         {module.lessons && (
                             <ul className="wd-lessons list-group rounded-0">
                                 {module.lessons.map((lesson) => (
-                                    <li className="wd-lesson list-group-item p-3 ps-1">
+                                    <li className="wd-lesson list-group-item p-3 ps-1" style={{ borderLeft: '5px solid green'}}>
                                         <BsGripVertical className="me-2 fs-3" />
                                         {lesson.name}
                                         <LessonControlButtons />
