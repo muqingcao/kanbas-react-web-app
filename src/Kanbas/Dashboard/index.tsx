@@ -38,12 +38,11 @@ export default function Dashboard(
             <div id="wd-dashboard-courses" className="row">
                 <div className="row row-cols-1 row-cols-md-5 g-4">
                     {courses.map((course) => {
-                        const imageName = course._id + ".jpg";
                         return (
                             <div className="wd-dashboard-course col" style={{ width: "300px" }}>
                                 <Link to={`/Kanbas/Courses/${course._id}/Home`} className="text-decoration-none" >
                                     <div className="card rounded-3 overflow-hidden">
-                                        <img src={`/images/${imageName}`} height={160} alt={`${course.name} course`} />
+                                        <img src={course.image} height={160} alt={`${course.name} course`} />
                                         <div className="card-body">
                                             <span className="wd-dashboard-course-link"
                                                 style={{ textDecoration: "none", color: "navy", fontWeight: "bold" }} >

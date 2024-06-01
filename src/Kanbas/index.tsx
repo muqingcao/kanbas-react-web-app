@@ -24,11 +24,13 @@ export default function Kanbas() {
         };
         setCourses([...courses, { ...course, ...newCourse }]);
     };
+
     const deleteCourse = (courseId: string) => {
         setCourses(
             courses.filter((course) => course._id !== courseId)
         );
     };
+    
     const updateCourse = () => {
         setCourses(
             courses.map((c) => {

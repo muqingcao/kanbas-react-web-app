@@ -18,6 +18,14 @@ export default function Assignments() {
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
     const dispatch = useDispatch();
     const currentDate = new Date();
+    const formatDate = (dateString: String) => {
+        if (!dateString) return 'N/A';
+        return dateString.split('T')[0];
+    };
+    const gradeUnit = (displayGradeAs: String) => {
+        if (displayGradeAs === "Percentage") return "%";
+        else return "pts";
+    }
 
     return (
         <div id="wd-assignments">
@@ -64,7 +72,7 @@ export default function Assignments() {
                                                 </Link>
                                                 <br />
                                                 <span>
-                                                    <span className="text-danger">Multiple Modules</span> | <b> Not available until</b> {assignment.from} | <b> Due </b> {assignment.due} | {assignment.points} pts
+                                                    <span className="text-danger">Multiple Modules</span> | <b> Not available until</b> {formatDate(assignment.from)} | <b> Due </b> {formatDate(assignment.due)} | {assignment.points} {gradeUnit(assignment.displayGradeAs)}
                                                 </span>
                                             </div>
                                         </div>

@@ -12,12 +12,11 @@ export default function AssignmentEditor() {
     const course = pathname.split("/")[3];
     const assignmentId = pathname.split("/")[5];
     const getAssignments = assignments.find(assignment => assignment._id === assignmentId);
-    
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const allAssignments = useSelector((state: any) => state.assignmentsReducer.assignments);
     const currentAssignment = allAssignments.find((assignment: any) => assignment._id === assignmentId);
-
 
     const currentDate = new Date();
     const defaultTitle = getAssignments ? getAssignments.title : "";
@@ -65,46 +64,11 @@ export default function AssignmentEditor() {
         }
     }, [currentAssignment]);
 
-    const handleTitleChange = (id: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        switch (id) {
-            case 'wd-name':
-                setTitle(value);
-                break;
-            case 'wd-points':
-                setPoints(value);
-                break;
-            case 'wd-group':
-                setAssignmentGroup(value);
-                break;
-            case 'wd-display-grade-as':
-                setDisplayGradeAs(value);
-                break;
-            case 'wd-submission-type':
-                setSubmissionType(value);
-                break;
-            case 'wd-due-date':
-                setDue(value);
-                break;
-            case 'wd-available-from':
-                setFrom(value);
-                break;
-            case 'wd-available-until':
-                setUntil(value);
-                break;
-            case 'wd-description':
-                setDescription(value);
-                break;
-            default:
-                break;
-        }
-    };
-
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const newAssignment = {
-            _id: assignmentId === "new" ? Math.floor(Math.random() * 9000) + 1000 : assignmentId,
+            _id: assignmentId === "new" ? new Date().getTime().toString() : assignmentId,
             title,
             course: course,
             points,
@@ -125,21 +89,28 @@ export default function AssignmentEditor() {
         navigate(`/Kanbas/Courses/${course}/Assignments`);
     };
 
-
+    const handleDescriptionChange = (e: any) => {
+        setDescription(e.target.innerHTML);
+    };
 
     return (
         <div id="wd-assignments-editor" className="p-4">
             <div className="row mb-3">
                 <div className="col">
                     <label htmlFor="wd-name" className="form-label"><b>Assignment Name</b></label>
-                    <input id="wd-name" className="form-control" value={title} onChange={handleTitleChange('wd-name')} />
+                    <input id="wd-name" className="form-control" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
             </div>
 
             <div className="row mb-3">
                 <div className="col">
-                    <div id="wd-description" className="form-control" contentEditable={true} style={{ minHeight: '100px', padding: '15px' }}>
-                        <div dangerouslySetInnerHTML={{ __html: defaultDescription }} />
+                    <div
+                        id="wd-description"
+                        className="form-control"
+                        contentEditable={true}
+                        style={{ minHeight: '100px', padding: '15px' }}
+                        onInput={handleDescriptionChange}
+                        dangerouslySetInnerHTML={{ __html: description }}>
                     </div>
                 </div>
             </div>
@@ -239,17 +210,17 @@ export default function AssignmentEditor() {
 
                                         <div className="form-group mb-2">
                                             <label htmlFor="wd-due-date" style={{ fontWeight: 'bold' }}>Due</label>
-                                            <input type="datetime-local" className="form-control" id="wd-due-date" value={due} onChange={handleTitleChange('wd-due-date')} />
+                                            <input type="datetime-local" className="form-control" id="wd-due-date" value={due} onChange={(e) => setDue(e.target.value)} />
                                         </div>
 
                                         <div className="form-group row mb-2">
                                             <div className="col-sm-6 d-flex flex-column justify-content-center">
                                                 <label htmlFor="wd-available-from" className="col-sm-6 col-form-label" style={{ fontWeight: 'bold' }}>Available from</label>
-                                                <input type="datetime-local" className="form-control" id="wd-available-from" value={from} onChange={handleTitleChange('wd-available-from')} />
+                                                <input type="datetime-local" className="form-control" id="wd-available-from" value={from} onChange={(e) => setFrom(e.target.value)} />
                                             </div>
                                             <div className="col-sm-6 d-flex flex-column justify-content-center">
                                                 <label htmlFor="wd-available-until" className="col-sm-6 col-form-label" style={{ fontWeight: 'bold' }}>Until</label>
-                                                <input type="datetime-local" className="form-control" id="wd-available-until" value={until} onChange={handleTitleChange('wd-available-until')} />
+                                                <input type="datetime-local" className="form-control" id="wd-available-until" value={until} onChange={(e) => setUntil(e.target.value)} />
                                             </div>
                                         </div>
                                     </div>
