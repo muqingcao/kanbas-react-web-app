@@ -8,13 +8,16 @@ import { FaPlus } from "react-icons/fa6";
 import { VscTriangleDown } from "react-icons/vsc";
 import { useParams, useLocation } from "react-router";
 import { Link } from 'react-router-dom';
-import { assignments } from "../../Database";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteAssignment } from "./reducer";
 
 export default function Assignments() {
     const { cid } = useParams();
-    const courseAssignments = assignments.filter((assignment) => assignment.course === cid);
     const { pathname } = useLocation();
     const course = pathname.split("/")[3];
+    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+    const dispatch = useDispatch();
+    const currentDate = new Date();
 
     return (
         <div id="wd-assignments">
@@ -27,7 +30,7 @@ export default function Assignments() {
                         className="form-control"
                         placeholder="Search..." />
                 </div>
-                <AssignmentControls />
+                <AssignmentControls course={course} />
             </div>
 
             <ul id="wd-modules" className="list-group rounded-0">
@@ -46,27 +49,36 @@ export default function Assignments() {
                     </div>
 
                     <ul className="wd-lessons list-group rounded-0">
-                        {courseAssignments.map((assignment) => (
-                            <li className="wd-lesson list-group-item p-3 ps-1" style={{ borderLeft: '5px solid green' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                                        <BsGripVertical className="me-2" style={{ fontSize: '1.5rem' }} />
-                                        <GiNotebook style={{ color: 'green', marginRight: '12px', fontSize: '1.5rem' }} />
-                                        <div style={{ margin: '0 20px' }}>
-                                            <Link to={`/Kanbas/Courses/${course}/Assignments/${assignment._id}`} 
-                                            style={{ color: 'black', textDecoration: 'none', fontWeight: 'bold' }}>
-                                                {assignment._id} {assignment.title}
-                                            </Link>
-                                            <br />
-                                            <span>
-                                                <span className="text-danger">Multiple Modules</span> | <b> Not available until</b> May 6 at 12:00am | <b> Due </b> May 13 at 11:59pm | 100 pts
-                                            </span>
+                        {assignments
+                            .filter((assignment: any) => assignment.course === cid)
+                            .map((assignment: any) => (
+                                <li className="wd-lesson list-group-item p-3 ps-1" style={{ borderLeft: '5px solid green' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                                            <BsGripVertical className="me-2" style={{ fontSize: '1.5rem' }} />
+                                            <GiNotebook style={{ color: 'green', marginRight: '12px', fontSize: '1.5rem' }} />
+                                            <div style={{ margin: '0 20px' }}>
+                                                <Link to={`/Kanbas/Courses/${course}/Assignments/${assignment._id}`}
+                                                    style={{ color: 'black', textDecoration: 'none', fontWeight: 'bold' }}>
+                                                    {assignment._id} {assignment.title}
+                                                </Link>
+                                                <br />
+                                                <span>
+                                                    <span className="text-danger">Multiple Modules</span> | <b> Not available until</b> {assignment.from} | <b> Due </b> {assignment.due} | {assignment.points} pts
+                                                </span>
+                                            </div>
                                         </div>
+                                        <AssignmentControlButtons assignmentId={assignment._id}
+                                            deleteAssignment={(assignmentId) => {
+                                                dispatch(deleteAssignment(assignmentId));
+                                            }}
+
+
+                                        />
+
                                     </div>
-                                    <AssignmentControlButtons />
-                                </div>
-                            </li>
-                        ))}
+                                </li>
+                            ))}
                     </ul>
                 </li>
             </ul>
