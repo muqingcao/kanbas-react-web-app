@@ -131,21 +131,20 @@ export default function AssignmentEditor() {
                             <div className="form-group row mb-3 justify-content-end">
                                 <label htmlFor="wd-group" className="col-sm-3 col-form-label" style={{ textAlign: 'right' }}>Assignment Group</label>
                                 <div className="col-sm-9 position-relative">
-                                    <select className="form-control" id="wd-group" value={assignmentGroup} onChange={(e) => setAssignmentGroup(e.target.value)}>
+                                    <select className="form-select" id="wd-group" value={assignmentGroup} onChange={(e) => setAssignmentGroup(e.target.value)}>
                                         <option value="ASSIGNMENTS" selected={defaultGroup === "ASSIGNMENTS"}>ASSIGNMENTS</option>
                                         <option value="EXAMS" selected={defaultGroup === "EXAMS"}>EXAMS</option>
                                         <option value="QUIZZES" selected={defaultGroup === "QUIZZES"}>QUIZZES</option>
                                         <option value="LABS" selected={defaultGroup === "LABS"}>LABS</option>
                                         <option value="PROJECTS" selected={defaultGroup === "PROJECTS"}>PROJECTS</option>
                                     </select>
-                                    <IoIosArrowDown className="position-absolute" style={{ top: '50%', right: '20px', transform: 'translateY(-50%)' }} />
                                 </div>
                             </div>
 
                             <div className="form-group row mb-3">
                                 <label htmlFor="wd-display-grade-as" className="col-sm-3 col-form-label" style={{ textAlign: 'right' }}>Display Grade as</label>
                                 <div className="col-sm-9 position-relative">
-                                    <select className="form-control" id="wd-display-grade-as" value={displayGradeAs} onChange={(e) => setDisplayGradeAs(e.target.value)}>
+                                    <select className="form-select" id="wd-display-grade-as" value={displayGradeAs} onChange={(e) => setDisplayGradeAs(e.target.value)}>
                                         <option value="Percentage" selected={defaultDisplayGradeAs === "Percentage"} >
                                             Percentage
                                         </option>
@@ -153,7 +152,6 @@ export default function AssignmentEditor() {
                                             Points
                                         </option>
                                     </select>
-                                    <IoIosArrowDown className="position-absolute" style={{ top: '50%', right: '20px', transform: 'translateY(-50%)' }} />
                                 </div>
                             </div>
 
@@ -162,12 +160,11 @@ export default function AssignmentEditor() {
                                 <div className="col-sm-9">
                                     <div className="border rounded p-3 mb-3">
                                         <div className="form-group mb-2 position-relative">
-                                            <select className="form-control" id="wd-submission-type" value={submissionType} onChange={(e) => setSubmissionType(e.target.value)}>
+                                            <select className="form-select" id="wd-submission-type" value={submissionType} onChange={(e) => setSubmissionType(e.target.value)}>
                                                 <option value="Online" selected={defaultSubmissionType === "Online"}>Online</option>
                                                 <option value="No Submission" selected={defaultSubmissionType === "No Submission"}>No Submission</option>
                                                 <option value="On Paper" selected={defaultSubmissionType === "On Paper"}>On Paper</option>
                                             </select>
-                                            <IoIosArrowDown className="position-absolute" style={{ top: '50%', right: '10px', transform: 'translateY(-50%)' }} />
                                         </div>
                                         <div className="form-group">
                                             <label style={{ fontWeight: 'bold' }}>Online Entry Options</label>
