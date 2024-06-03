@@ -80,10 +80,7 @@ export default function Assignments() {
                                             deleteAssignment={(assignmentId) => {
                                                 dispatch(deleteAssignment(assignmentId));
                                             }}
-
-
                                         />
-
                                     </div>
                                 </li>
                             ))}
