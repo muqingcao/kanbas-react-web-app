@@ -21,3 +21,11 @@ export default function ObjectStateVariable() {
         </div>
     );
 }
+
+
+
+
+
+
+
+

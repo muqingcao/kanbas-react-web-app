@@ -226,8 +226,6 @@ tag to tell browsers to render the gaps.
                 <input id="wd-upload" type="file"/>
             </div>
 
-            
-
             <h5 id="wd-radio-buttons">Radio buttons</h5>
             <label>Favorite movie genre:</label><br />
             <input type="radio" name="radio-genre" id="wd-radio-comedy"/>
