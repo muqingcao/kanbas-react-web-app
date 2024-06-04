@@ -20,7 +20,7 @@ export default function Assignments() {
     const currentDate = new Date();
     const formatDate = (dateString: String) => {
         if (!dateString) return 'N/A';
-        return dateString.split('T')[0];
+        return dateString.split('T');
     };
     const gradeUnit = (displayGradeAs: String) => {
         if (displayGradeAs === "Percentage") return "%";
@@ -72,7 +72,7 @@ export default function Assignments() {
                                                 </Link>
                                                 <br />
                                                 <span>
-                                                    <span className="text-danger">Multiple Modules</span> | <b> Not available until</b> {formatDate(assignment.from)} | <b> Due </b> {formatDate(assignment.due)} | {assignment.points} {gradeUnit(assignment.displayGradeAs)}
+                                                    <span className="text-danger">Multiple Modules</span> | <b> Not available until</b> {formatDate(assignment.from)[0]} {formatDate(assignment.from)[1]} | <b> Due </b> {formatDate(assignment.due)[0]} {formatDate(assignment.from)[1]} | {assignment.points} {gradeUnit(assignment.displayGradeAs)}
                                                 </span>
                                             </div>
                                         </div>
