@@ -6,6 +6,7 @@ import { assignments } from "../../Database";
 import { useDispatch, useSelector } from "react-redux";
 import React, { FormEvent, useState, useEffect } from "react";
 import { addAssignment, editAssignment } from "./reducer";
+import * as client from "./client";
 
 export default function AssignmentEditor() {
     const { pathname } = useLocation();
@@ -18,27 +19,37 @@ export default function AssignmentEditor() {
     const allAssignments = useSelector((state: any) => state.assignmentsReducer.assignments);
     const currentAssignment = allAssignments.find((assignment: any) => assignment._id === assignmentId);
 
+    // Update an Assignment
+    const saveAssignment = async (assignment: any) => {
+        const status = await client.updateAssignment(assignment);
+        dispatch(editAssignment(assignment));
+    };
+
+    // Creating Assignments for a Course
+    const createAssignment = async (assignment: any) => {
+        const newAssignment = await client.createAssignment(course as string, assignment);
+        dispatch(addAssignment(newAssignment));
+    };
+
+
     const currentDate = new Date();
     const defaultTitle = getAssignments ? getAssignments.title : "";
     const defaultPoints = getAssignments ? getAssignments.points : "100";
     const defaultGroup = getAssignments ? getAssignments.assignmentGroup : "ASSIGNMENTS";
-    const defaultDisplayGradeAs = getAssignments ? getAssignments.displayGradeAs : "Percentage";
+    const defaultDisplayGradeAs = getAssignments ? getAssignments.displayGradeAs : "Points";
     const defaultSubmissionType = getAssignments ? getAssignments.submissionType : "Online";
     const defaultDueDate = getAssignments && getAssignments.due ? getAssignments.due : currentDate.toISOString().slice(0, 16);
     const defaultAvailableFrom = getAssignments && getAssignments.from ? getAssignments.from : currentDate.toISOString().slice(0, 10) + "T00:00";
     const defaultAvailableUntil = getAssignments && getAssignments.until ? getAssignments.until : currentDate.toISOString().slice(0, 10) + "T00:00";
     const defaultDescription = getAssignments ? getAssignments.description :
-        `<p>The assignment is <span className="text-danger">available online</span>. </p>
-         <p>Submit a link to the landing page of your Web application running on Netlify. </p>
-         <p>The landing page should include the following:
-             <ul>
-                 <li>Your full name and section</li>
-                 <li>Links to each of the lab assignments</li>
-                 <li>Link to the Kanbas application</li>
-                 <li>Links to all relevant source code repositories</li>
-             </ul>
-         </p>
-         <p>The Kanbas application should include a link to navigate back to the landing page.</p>`;
+        `The assignment is available online.
+        Submit a link to the landing page of your Web application running on Netlify.
+        The landing page should include the following:
+        - Your full name and section
+        - Links to each of the lab assignments
+        - Link to the Kanbas application
+        - Links to all relevant source code repositories
+        The Kanbas application should include a link to navigate back to the landing page.`;
 
     const [title, setTitle] = useState(defaultTitle);
     const [points, setPoints] = useState(defaultPoints);
@@ -81,11 +92,10 @@ export default function AssignmentEditor() {
             description,
         };
         if (currentAssignment) {
-            dispatch(editAssignment(newAssignment));
+            saveAssignment(newAssignment);
         } else {
-            dispatch(addAssignment(newAssignment));
+            createAssignment(newAssignment);
         }
-
         navigate(`/Kanbas/Courses/${course}/Assignments`);
     };
 
@@ -104,14 +114,13 @@ export default function AssignmentEditor() {
 
             <div className="row mb-3">
                 <div className="col">
-                    <div
+                    <textarea
                         id="wd-description"
                         className="form-control"
-                        contentEditable={true}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
                         style={{ minHeight: '100px', padding: '15px' }}
-                        onInput={handleDescriptionChange}
-                        dangerouslySetInnerHTML={{ __html: description }}>
-                    </div>
+                    />
                 </div>
             </div>
 

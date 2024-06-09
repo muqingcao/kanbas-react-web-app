@@ -9,7 +9,9 @@ import { VscTriangleDown } from "react-icons/vsc";
 import { useParams, useLocation } from "react-router";
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { setAssignments, deleteAssignment } from "./reducer";
+import { useEffect } from "react";
+import * as client from "./client";
 
 export default function Assignments() {
     const { cid } = useParams();
@@ -26,6 +28,20 @@ export default function Assignments() {
         if (displayGradeAs === "Percentage") return "%";
         else return "pts";
     }
+    // Deleting a Module
+    const removeAssignment = async (assignmentId: string) => {
+        await client.deleteAssignment(assignmentId);
+        dispatch(deleteAssignment(assignmentId));
+    };
+
+    // Retrieving Assignments for Course
+    const fetchAssignments = async () => {
+        const assignments = await client.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignments(assignments));
+    };
+    useEffect(() => {
+        fetchAssignments();
+    }, []);
 
     return (
         <div id="wd-assignments">
@@ -78,7 +94,7 @@ export default function Assignments() {
                                         </div>
                                         <AssignmentControlButtons assignmentId={assignment._id}
                                             deleteAssignment={(assignmentId) => {
-                                                dispatch(deleteAssignment(assignmentId));
+                                                removeAssignment(assignmentId);
                                             }}
                                         />
                                     </div>
