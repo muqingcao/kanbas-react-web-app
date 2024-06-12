@@ -1,0 +1,32 @@
+[
+    {
+        "_id": "qt01",
+        "name": "Question 1",
+        "type": "Multiple Choice",
+        "question_text": "Which of the following is the primary advantage of a liquid rocket engine over a solid rocket engine?",
+        "options": [
+            "Higher specific impulse",
+            "Lower cost",
+            "Simpler design",
+            "Shorter burn time"
+        ],
+        "correct_answer": "Higher specific impulse",
+        "points": 1
+    },
+    {
+        "_id": "qt02",
+        "name": "Question 2",
+        "type": "True/False",
+        "question_text": "Specific impulse is a measure of how efficiently a rocket uses its fuel.",
+        "correct_answer": "True",
+        "points": 1
+    },
+    {
+        "_id": "qt03",
+        "name": "Question 3",
+        "type": "Fill in the Blanks",
+        "question_text": "The ________ effect explains the principle of rocket propulsion.",
+        "correct_answer": "Newton's Third Law",
+        "points": 1
+    }
+]

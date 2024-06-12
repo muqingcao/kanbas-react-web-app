@@ -4,7 +4,9 @@ import assignments from "./assignments.json";
 import users from "./users.json";
 import enrollments from "./enrollments.json";
 import grades from "./grades.json";
+import questions from "./questions.json";
+import quizzes from "./quizzes.json";
 
 export {  
-    courses, modules, assignments, users, enrollments, grades
+    courses, modules, assignments, users, enrollments, grades, questions, quizzes
 };

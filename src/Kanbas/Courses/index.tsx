@@ -9,7 +9,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaAlignJustify } from "react-icons/fa6";
 import Quizzes from "./Quizzes";
 import Detail from "./Quizzes/Detail";
-import Editor from "./Quizzes/Editor";
+import EditorQuestions from "./Quizzes/EditorQuestions";
+import EditorDetail from "./Quizzes/EditorDetail";
 
 export default function Courses({ courses }: { courses: any[]; }) {
     const { cid } = useParams();
@@ -35,8 +36,11 @@ export default function Courses({ courses }: { courses: any[]; }) {
                         <Route path="Assignments/:id" element={<AssignmentEditor />} />
                         <Route path="Grades" element={<Grades />} />
                         <Route path="Quizzes" element={<Quizzes />} />
-                        <Route path="Quizzes/Q1" element={<Detail />} />
-                        <Route path="Quizzes/new" element={<Editor />} />
+                        <Route path="Quizzes/newdetail" element={<EditorDetail />} />
+                        <Route path="Quizzes/newquestions" element={<EditorQuestions />} />
+                        <Route path="Quizzes/:id/editdetail" element={<EditorDetail />} />
+                        <Route path="Quizzes/:id/editquestions" element={<EditorQuestions />} />
+                        <Route path="Quizzes/:id" element={<Detail />} />
                     </Routes>
                 </div>
             </div>
