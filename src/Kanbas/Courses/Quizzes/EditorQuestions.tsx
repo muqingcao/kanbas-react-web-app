@@ -1,13 +1,13 @@
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { RiForbidLine } from "react-icons/ri";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import EditorNavigation from "./EditorNavigation";
 import { quizzes } from "../../Database";
 import { FaPlus } from "react-icons/fa";
 
 export default function EditorQuestions() {
     const { pathname } = useLocation();
-    const cid = pathname.split("/")[3];
+    const { cid } = useParams();
     const qid = pathname.split("/")[5];
 
     return (

@@ -1,10 +1,10 @@
 import { GiPencil } from "react-icons/gi";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { quizzes } from "../../Database";
 
 export default function Detail() {
     const { pathname } = useLocation();
-    const cid = pathname.split("/")[3];
+    const { cid } = useParams();
     const qid = pathname.split("/")[5];
     const currQuiz = quizzes.find(quiz => quiz.course === cid && quiz._id === qid);
 

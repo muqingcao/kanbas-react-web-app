@@ -1,6 +1,6 @@
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { RiForbidLine } from "react-icons/ri";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import EditorNavigation from "./EditorNavigation";
 import { quizzes } from "../../Database";
 import { RxCross2 } from "react-icons/rx";
@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 export default function EditorDetail() {
     const { pathname } = useLocation();
-    const cid = pathname.split("/")[3];
+    const { cid } = useParams();
     const qid = pathname.split("/")[5];
 
     // selectors, dispatchers, and reducer functions
@@ -23,7 +23,7 @@ export default function EditorDetail() {
 
     // default values for all inputs
     const defaultTitle = isEdit && currQuiz ? currQuiz.title : "Unnamed quiz";
-    const defaultInstruction = isEdit && currQuiz ? currQuiz.instruction : "";
+    const defaultDescription = isEdit && currQuiz ? currQuiz.description : "";
     const defaultQuizType = isEdit && currQuiz ? currQuiz.quiz_type : "Graded Quiz";
     const defaultPoints = isEdit && currQuiz ? currQuiz.points : "";
     const defaultAssignmentGroup = isEdit && currQuiz ? currQuiz.assignment_group : "Quizzes";
@@ -46,7 +46,7 @@ export default function EditorDetail() {
     const defaultAvailableUntil = isEdit && currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00";
 
     const [title, setTitle] = useState(defaultTitle);
-    const [instruction, setInstruction] = useState(defaultInstruction);
+    const [description, setDescription] = useState(defaultDescription);
     const [quizType, setQuizType] = useState(defaultQuizType);
     const [points, setPoints] = useState(defaultPoints);
     const [assignmentGroup, setAssignmentGroup] = useState(defaultAssignmentGroup);
@@ -73,7 +73,7 @@ export default function EditorDetail() {
             _id: isEdit ? qid : Date.now().toString(),
             course: cid,
             title: title,
-            instruction: instruction,
+            description: description,
             quiz_type: quizType,
             points: points,
             assignment_group: assignmentGroup,
@@ -138,14 +138,14 @@ export default function EditorDetail() {
                 {/* Description */}
                 <div className="row mb-3">
                     <div className="col">
-                        <label htmlFor="quiz-instruction" className="form-label">
-                            <b>Quiz Instructiins</b>
+                        <label htmlFor="quiz-description" className="form-label">
+                            <b>Quiz Instructions</b>
                         </label>
                         <textarea
-                            id="quiz-instruction"
+                            id="quiz-description"
                             className="form-control"
-                            value={instruction}
-                            onChange={(e) => setInstruction(e.target.value)}
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                             style={{ minHeight: '100px', padding: '15px' }}
                         />
                     </div>

@@ -1,5 +1,7 @@
+import { useParams } from "react-router";
+
 export default function EditorNavigation({ pathname }: { pathname: string }) {
-    const cid = pathname.split("/")[3];
+    const { cid } = useParams();
     const qid = pathname.split("/")[5];
 
     // Check if the current path is for editing or creating a new quiz

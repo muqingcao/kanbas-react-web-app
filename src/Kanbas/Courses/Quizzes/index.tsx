@@ -1,5 +1,5 @@
 import { FaCheckCircle, FaCircle, FaPlus } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
 import { VscTriangleDown } from "react-icons/vsc";
@@ -8,12 +8,31 @@ import { MdOutlineRocketLaunch } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import { deleteQuiz } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { Button, Modal } from "react-bootstrap";
 
 export default function Quizzes() {
     const { pathname } = useLocation();
-    const cid = pathname.split("/")[3];
+    const { cid } = useParams();
     const quizzes = useSelector((state: any) => state.quizzesReducer ? state.quizzesReducer.quizzes : []);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [showModal, setShowModal] = useState(false);
+
+    const handleEditClick = (quiz: any) => {
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`);
+    };
+
+    const handleDeleteClick = (quiz: any) => {
+        dispatch(deleteQuiz(quiz._id));
+        setShowModal(false);
+    };
+
+    const handlePublishClick = () => {
+        // Implement the publish functionality
+        console.log("Publish clicked");
+    };
+
 
     return (
         <div id="quizzes-container">
@@ -27,7 +46,7 @@ export default function Quizzes() {
                         placeholder="Search for Quiz" />
                 </div>
                 <div className="text-nowrap">
-                    <button id="options-button" className="btn btn-lg btn-light border me-1 float-end" >
+                    <button id="options-button" className="btn btn-lg btn-light border me-1 float-end">
                         <BsThreeDotsVertical className="position-relative mb-1" />
                     </button>
 
@@ -72,14 +91,35 @@ export default function Quizzes() {
                                             </span>
                                         </div>
                                         <div className="d-flex align-self-center" >
-                                            <div id="quiz-status">
+                                            <div id="quiz-status" className="ms-3">
                                                 <FaCheckCircle className="text-success fs-5" />
                                                 <FaCircle className="text-white fs-6" />
                                             </div>
-                                            <div id="quiz-options">
+                                            <button id="quiz-options" className="border-0 bg-transparent" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <IoEllipsisVertical className="fs-4" />
-                                            </div>
+                                            </button>
+                                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><button className="dropdown-item" type="button" onClick={() => handleEditClick(quiz)}>Edit</button></li>
+                                                <li><button className="dropdown-item" type="button" onClick={() => setShowModal(true)}>Delete</button></li>
+                                                <li><button className="dropdown-item" type="button" onClick={handlePublishClick}>Publish</button></li>
+                                            </ul>
                                         </div>
+                                        <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" keyboard={false}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Delete Assignment</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                Are you sure you want to remove the assignment?
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                                                    No
+                                                </Button>
+                                                <Button variant="danger" onClick={() => handleDeleteClick(quiz)}>
+                                                    Yes
+                                                </Button>
+                                            </Modal.Footer>
+                                        </Modal>
                                     </div>
                                 </li>
                             ))}
