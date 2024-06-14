@@ -13,7 +13,7 @@ export default function EditorDetail() {
     const { cid } = useParams();
     const qid = pathname.split("/")[5];
 
-    // selectors, dispatchers, and reducer functions
+    // selectors, dispatchers, reducer functions
     const isEdit = pathname.includes("edit");
 
     const allQuizzes = useSelector((state: any) => state.quizReducer ? state.quizReducer.quizzes : []);
