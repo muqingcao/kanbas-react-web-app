@@ -64,7 +64,7 @@ export default function Kanbas() {
 
     return (
         <Provider store={store}>
-            <Session>
+            {/* <Session> */}
                 <div id="wd-kanbas" className="h-200">
                     <div className="d-flex h-200">
                         <div className="d-none d-md-block bg-black">
@@ -96,7 +96,7 @@ export default function Kanbas() {
                         </div>
                     </div>
                 </div>
-            </Session>
+            {/* </Session> */}
         </Provider>
     )
 };
