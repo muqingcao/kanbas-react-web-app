@@ -40,7 +40,7 @@ export default function Dashboard(
                     {courses.map((course) => {
                         return (
                             <div className="wd-dashboard-course col" style={{ width: "300px" }}>
-                                <Link to={`/Kanbas/Courses/${course._id}/Home`} className="text-decoration-none" >
+                                <Link to={`/Kanbas/Courses/${course.number}/Home`} className="text-decoration-none" >
                                     <div className="card rounded-3 overflow-hidden">
                                         <img src={course.image} height={160} alt={`${course.name} course`} />
                                         <div className="card-body">
@@ -52,7 +52,7 @@ export default function Dashboard(
                                                 {course.description}
                                             </p>
 
-                                            <Link to={`/Kanbas/Courses/${course._id}/Home`} className="btn btn-primary">
+                                            <Link to={`/Kanbas/Courses/${course.number}/Home`} className="btn btn-primary">
                                                 Go
                                             </Link>
 
