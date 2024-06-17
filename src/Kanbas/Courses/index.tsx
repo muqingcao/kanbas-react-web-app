@@ -11,6 +11,7 @@ import Quizzes from "./Quizzes";
 import Detail from "./Quizzes/Detail";
 import EditorQuestions from "./Quizzes/EditorQuestions";
 import EditorDetail from "./Quizzes/EditorDetail";
+import PeopleTable from "./People/Table";
 
 export default function Courses({ courses }: { courses: any[]; }) {
     const { cid } = useParams();
@@ -34,6 +35,9 @@ export default function Courses({ courses }: { courses: any[]; }) {
                         <Route path="Modules" element={<Modules />} />
                         <Route path="Assignments" element={<Assignments />} />
                         <Route path="Assignments/:id" element={<AssignmentEditor />} />
+                        <Route path="People" element={<PeopleTable />} />
+                        <Route path="People/:uid" element={<PeopleTable />} />
+                        
                         <Route path="Grades" element={<Grades />} />
                         <Route path="Quizzes" element={<Quizzes />} />
                         <Route path="Quizzes/newdetail" element={<EditorDetail />} />
