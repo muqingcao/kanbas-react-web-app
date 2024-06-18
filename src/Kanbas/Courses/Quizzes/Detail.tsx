@@ -1,12 +1,34 @@
 import { GiPencil } from "react-icons/gi";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { quizzes } from "../../Database";
+import { useDispatch, useSelector } from "react-redux";
+import { findQuizDetails } from "./client";
+import { useEffect } from "react";
+import { setQuizDetails } from './reducer';
 
 export default function Detail() {
     const { pathname } = useLocation();
     const { cid } = useParams();
     const qid = pathname.split("/")[5];
-    const currQuiz = quizzes.find(quiz => quiz.course === cid && quiz._id === qid);
+    const dispatch = useDispatch();
+    //const currQuiz = quizzes.find(quiz => quiz.course === cid && quiz._id === qid);
+    const allQuizzes = useSelector((state: any) => state.quizReducer ? state.quizReducer.quizzes : []);
+    const currQuiz = allQuizzes.find((quiz: any) => quiz.course === cid && quiz._id === qid);
+
+    // Retrieving details for a quiz
+    const fetchQuizDetails = async () => {
+        try {
+            const details = await findQuizDetails(cid as string, qid);
+            dispatch(setQuizDetails(details));
+        } catch (error) {
+            console.error("Failed to fetch quiz details:", error);
+        }
+    };
+    useEffect(() => {
+        if (!currQuiz) {
+            fetchQuizDetails();
+        }
+    }, [cid, qid, currQuiz]);
+
 
     return (
         <div id="detail-container">
@@ -145,4 +167,8 @@ export default function Detail() {
 
         </div>
     )
+}
+
+function dispatch(arg0: Promise<any>) {
+    throw new Error("Function not implemented.");
 }

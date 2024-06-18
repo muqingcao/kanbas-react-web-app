@@ -6,19 +6,59 @@ import { VscTriangleDown } from "react-icons/vsc";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { MdOutlineRocketLaunch } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
-import { deleteQuiz } from "./reducer";
+import { setQuizzes, deleteQuiz } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
+import * as client from "./client";
 
 export default function Quizzes() {
     const { pathname } = useLocation();
     const { cid } = useParams();
-    const quizzes = useSelector((state: any) => state.quizzesReducer ? state.quizzesReducer.quizzes : []);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+    const { quizzes } = useSelector((state: any) => state.quizzesReducer);
+    
+    // Retrieving Quizzes for Course
+    const fetchQuizzes = async () => {
+        const Quizzes = await client.findQuizzesForCourse(cid as string);
+        dispatch(setQuizzes(Quizzes));
+    };
+    useEffect(() => {
+        fetchQuizzes();
+    }, []);
 
+    // format some key details
+    const currDate = new Date();
+    const getQuizStatus = (availableDateString: any, untilDateString: any) => {
+        const availableDate = new Date(availableDateString);
+        const untilDate = new Date(untilDateString);
+        if (currDate < availableDate) return { text: 'Not available until', date: availableDate };
+        else if (currDate >= availableDate && currDate <= untilDate) return { text: 'Available until', date: untilDate };
+        else return { text: 'Closed', date: null };
+    }
+    const formattedDateTime = (date: any) => {
+        return date ? date.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        }).replace(',', ' ')
+            : '';
+    }
+    const renderQuizDetails = (quiz: any) => {
+        const { text, date } = getQuizStatus(quiz.available_date, quiz.until_date);
+        return (
+            <>
+                <b>{text}</b> {date && formattedDateTime(date)}
+            </>
+        )
+    }
+
+    // handle click
     const handleEditClick = (quiz: any) => {
         navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`);
     };
@@ -87,7 +127,7 @@ export default function Quizzes() {
                                             </Link>
                                             <br />
                                             <span id="quiz-details">
-                                                <b> Closed </b> | <b> Due </b> Sep 21 at 1pm | 29 pts | 11 Questions
+                                                {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points} pts | {quiz.questions ? quiz.questions.length : 0} Questions
                                             </span>
                                         </div>
                                         <div className="d-flex align-self-center" >

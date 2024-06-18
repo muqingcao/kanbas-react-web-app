@@ -2,48 +2,51 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { RiForbidLine } from "react-icons/ri";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import EditorNavigation from "./EditorNavigation";
-import { quizzes } from "../../Database";
 import { RxCross2 } from "react-icons/rx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addQuiz, editQuiz } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
+import { findQuizDetails } from "./client";
 
 export default function EditorDetail() {
     const { pathname } = useLocation();
-    const { cid } = useParams();
+    const { cid } = useParams<{ cid: string }>();
     const qid = pathname.split("/")[5];
-
-    // selectors, dispatchers, reducer functions
+    const [currQuiz, setCurrQuiz] = useState<any>(null);
     const isEdit = pathname.includes("edit");
-
-    const allQuizzes = useSelector((state: any) => state.quizReducer ? state.quizReducer.quizzes : []);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const currQuiz = allQuizzes.find((quiz: any) => quiz.course === cid && quiz._id === qid);
+
+
+
+
+    // const allQuizzes = useSelector((state: any) => state.quizReducer ? state.quizReducer.quizzes : []);
+    // const currQuiz = allQuizzes.find((quiz: any) => quiz.course === cid && quiz._id === qid);
+
 
     // default values for all inputs
-    const defaultTitle = isEdit && currQuiz ? currQuiz.title : "Unnamed quiz";
-    const defaultDescription = isEdit && currQuiz ? currQuiz.description : "";
-    const defaultQuizType = isEdit && currQuiz ? currQuiz.quiz_type : "Graded Quiz";
-    const defaultPoints = isEdit && currQuiz ? currQuiz.points : "";
-    const defaultAssignmentGroup = isEdit && currQuiz ? currQuiz.assignment_group : "Quizzes";
+    const defaultTitle = currQuiz ? currQuiz.title : "Unnamed quiz";
+    const defaultDescription = currQuiz ? currQuiz.description : "";
+    const defaultQuizType = currQuiz ? currQuiz.quiz_type : "Graded Quiz";
+    const defaultPoints = currQuiz ? currQuiz.points : "";
+    const defaultAssignmentGroup = currQuiz ? currQuiz.assignment_group : "Quizzes";
 
-    const defaultShuffleAnswers = isEdit && currQuiz ? currQuiz.shuffle_answers : "Yes";
-    const defaultTimeLimit = isEdit && currQuiz ? currQuiz.time_limit : "Yes";
-    const defaultHowLong = isEdit && currQuiz ? currQuiz.how_long : "20";
-    const defaultMultipleAttempts = isEdit && currQuiz ? currQuiz.multiple_attempts : "No";
-    const defaultHowManyAttempts = isEdit && currQuiz ? currQuiz.how_many_attempts : "1";
-    const defaultShowCorrectAnswers = isEdit && currQuiz ? currQuiz.show_correct_answers : "Immediately";
-    const defaultAccessCode = isEdit && currQuiz ? currQuiz.access_code : "No";
-    const defaultAccessCodeNumber = isEdit && currQuiz ? currQuiz.access_code_number : "";
-    const defaultOneQuestionAtATime = isEdit && currQuiz ? currQuiz.one_question_at_a_time : "Yes";
-    const defaultWebcamRequired = isEdit && currQuiz ? currQuiz.webcam_required : "No";
-    const defaultLockQuestionsAfterAnswering = isEdit && currQuiz ? currQuiz.lock_questions_after_answering : "No";
+    const defaultShuffleAnswers = currQuiz ? currQuiz.shuffle_answers : "Yes";
+    const defaultTimeLimit = currQuiz ? currQuiz.time_limit : "Yes";
+    const defaultHowLong = currQuiz ? currQuiz.how_long : "20";
+    const defaultMultipleAttempts = currQuiz ? currQuiz.multiple_attempts : "No";
+    const defaultHowManyAttempts = currQuiz ? currQuiz.how_many_attempts : "1";
+    const defaultShowCorrectAnswers = currQuiz ? currQuiz.show_correct_answers : "Immediately";
+    const defaultAccessCode = currQuiz ? currQuiz.access_code : "No";
+    const defaultAccessCodeNumber = currQuiz ? currQuiz.access_code_number : "";
+    const defaultOneQuestionAtATime = currQuiz ? currQuiz.one_question_at_a_time : "Yes";
+    const defaultWebcamRequired = currQuiz ? currQuiz.webcam_required : "No";
+    const defaultLockQuestionsAfterAnswering = currQuiz ? currQuiz.lock_questions_after_answering : "No";
 
     const currentDate = new Date();
-    const defaultDueDate = isEdit && currQuiz ? currQuiz.due_date : currentDate.toISOString().slice(0, 10) + "T00:00";
-    const defaultAvailableDate = isEdit && currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00";
-    const defaultAvailableUntil = isEdit && currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00";
+    const defaultDueDate = currQuiz ? currQuiz.due_date : currentDate.toISOString().slice(0, 10) + "T00:00";
+    const defaultAvailableDate = currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00";
+    const defaultAvailableUntil = currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00";
 
     const [title, setTitle] = useState(defaultTitle);
     const [description, setDescription] = useState(defaultDescription);
@@ -100,6 +103,18 @@ export default function EditorDetail() {
         navigate(`/Kanbas/Courses/${cid}/Quizzes`);
     };
 
+    // Retrieving details for a quiz
+    const fetchQuizDetails = async () => {
+        try {
+            const details = await findQuizDetails(cid as string, qid);
+            setCurrQuiz(details);
+        } catch (error) {
+            console.error("Failed to fetch quiz details:", error);
+        }
+    };
+    useEffect(() => {
+        fetchQuizDetails();
+    }, [cid, qid]);
 
     return (
         <form onSubmit={handleSave}>
