@@ -7,18 +7,19 @@ const quizSlice = createSlice({
     name: "quizzes",
     initialState,
     reducers: {
-        setQuizDetails: (state, action) => {
-            const updatedQuiz = action.payload;
-            const existingQuizIndex = state.quizzes.findIndex(quiz => quiz._id === updatedQuiz._id);
+        setQuizDetails: (state, { payload: quiz }) => {
+            const existingQuizIndex = state.quizzes.findIndex((q: any) => q._id === quiz._id);
             if (existingQuizIndex !== -1) {
-                state.quizzes[existingQuizIndex] = updatedQuiz;
+                (state.quizzes as any)[existingQuizIndex] = quiz;
             } else {
-                state.quizzes.push(updatedQuiz);
+                state.quizzes = [...state.quizzes, quiz] as any;
             }
         },
+
         setQuizzes: (state, action) => {
             state.quizzes = action.payload;
         },
+
         addQuiz: (state, { payload: quiz }) => {
             const newQuiz: any = {
                 _id: quiz._id,
@@ -56,6 +57,6 @@ const quizSlice = createSlice({
         },
     },
 });
-export const { addQuiz, deleteQuiz, editQuiz, setQuizzes } =
+export const { addQuiz, deleteQuiz, editQuiz, setQuizzes, setQuizDetails } =
     quizSlice.actions;
 export default quizSlice.reducer;

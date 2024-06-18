@@ -6,105 +6,27 @@ import { RxCross2 } from "react-icons/rx";
 import { useEffect, useState } from "react";
 import { addQuiz, editQuiz } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
-import { findQuizDetails } from "./client";
+import * as client from "./client";
+import { setQuizDetails } from './reducer';
 
 export default function EditorDetail() {
     const { pathname } = useLocation();
     const { cid } = useParams<{ cid: string }>();
     const qid = pathname.split("/")[5];
-    const [currQuiz, setCurrQuiz] = useState<any>(null);
     const isEdit = pathname.includes("edit");
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // const allQuizzes = useSelector((state: any) => state.quizReducer ? state.quizReducer.quizzes : []);
-    // const currQuiz = allQuizzes.find((quiz: any) => quiz.course === cid && quiz._id === qid);
+    // extract quiz details from redux
+    const allQuizzes = useSelector((state: any) => state.quizzesReducer ? state.quizzesReducer.quizzes : []);
+    const currQuiz = allQuizzes.find((quiz: any) => quiz.course === cid && quiz._id === qid);
 
-
-    // default values for all inputs
-    const defaultTitle = currQuiz ? currQuiz.title : "Unnamed quiz";
-    const defaultDescription = currQuiz ? currQuiz.description : "";
-    const defaultQuizType = currQuiz ? currQuiz.quiz_type : "Graded Quiz";
-    const defaultPoints = currQuiz ? currQuiz.points : "";
-    const defaultAssignmentGroup = currQuiz ? currQuiz.assignment_group : "Quizzes";
-
-    const defaultShuffleAnswers = currQuiz ? currQuiz.shuffle_answers : "Yes";
-    const defaultTimeLimit = currQuiz ? currQuiz.time_limit : "Yes";
-    const defaultHowLong = currQuiz ? currQuiz.how_long : "20";
-    const defaultMultipleAttempts = currQuiz ? currQuiz.multiple_attempts : "No";
-    const defaultHowManyAttempts = currQuiz ? currQuiz.how_many_attempts : "1";
-    const defaultShowCorrectAnswers = currQuiz ? currQuiz.show_correct_answers : "Immediately";
-    const defaultAccessCode = currQuiz ? currQuiz.access_code : "No";
-    const defaultAccessCodeNumber = currQuiz ? currQuiz.access_code_number : "";
-    const defaultOneQuestionAtATime = currQuiz ? currQuiz.one_question_at_a_time : "Yes";
-    const defaultWebcamRequired = currQuiz ? currQuiz.webcam_required : "No";
-    const defaultLockQuestionsAfterAnswering = currQuiz ? currQuiz.lock_questions_after_answering : "No";
-
-    const currentDate = new Date();
-    const defaultDueDate = currQuiz ? currQuiz.due_date : currentDate.toISOString().slice(0, 10) + "T00:00";
-    const defaultAvailableDate = currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00";
-    const defaultAvailableUntil = currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00";
-
-    const [title, setTitle] = useState(defaultTitle);
-    const [description, setDescription] = useState(defaultDescription);
-    const [quizType, setQuizType] = useState(defaultQuizType);
-    const [points, setPoints] = useState(defaultPoints);
-    const [assignmentGroup, setAssignmentGroup] = useState(defaultAssignmentGroup);
-
-    const [isShuffleAnswers, setIsShuffleAnswers] = useState(defaultShuffleAnswers);
-    const [isTimeLimit, setIsTimeLimit] = useState(defaultTimeLimit);
-    const [howLong, setHowLong] = useState(defaultHowLong);
-    const [isMutipleAttempts, setIsMutipleAttempts] = useState(defaultMultipleAttempts);
-    const [howManyAttempts, setHowManyAttempts] = useState(defaultHowManyAttempts);
-    const [showCorrectAnswers, setShowCorrectAnswers] = useState(defaultShowCorrectAnswers);
-    const [isAccessCode, setIsAccessCode] = useState(defaultAccessCode);
-    const [accessCodeNumber, setAccessCodeNumber] = useState(defaultAccessCodeNumber);
-
-    const [isOneQuestionAtATime, setIsOneQuestionAtATime] = useState(defaultOneQuestionAtATime);
-    const [isWebcamRequired, setIsWebcamRequired] = useState(defaultWebcamRequired);
-    const [isLockQuestionsAfterAnswering, setIsLockQuestionsAfterAnswering] = useState(defaultLockQuestionsAfterAnswering);
-
-    const [dueDate, setDueDate] = useState(defaultDueDate);
-    const [availableDate, setAvailableDate] = useState(defaultAvailableDate);
-    const [availableUntil, setAvailableUntil] = useState(defaultAvailableUntil);
-
-    const handleSave = () => {
-        const quiz = {
-            _id: isEdit ? qid : Date.now().toString(),
-            course: cid,
-            title: title,
-            description: description,
-            quiz_type: quizType,
-            points: points,
-            assignment_group: assignmentGroup,
-            shuffle_answers: isShuffleAnswers,
-            time_limit: isTimeLimit,
-            how_long: howLong,
-            multiple_attempts: isMutipleAttempts,
-            how_many_attempts: howManyAttempts,
-            show_correct_answers: showCorrectAnswers,
-            access_code: isAccessCode,
-            access_code_number: accessCodeNumber,
-            one_question_at_a_time: isOneQuestionAtATime,
-            webcam_required: isWebcamRequired,
-            lock_questions_after_answering: isLockQuestionsAfterAnswering,
-            due_date: dueDate,
-            available_date: availableDate,
-            until_date: availableUntil,
-        };
-        if (isEdit) {
-            dispatch(editQuiz(quiz));
-        } else {
-            dispatch(addQuiz(quiz));
-        }
-        navigate(`/Kanbas/Courses/${cid}/Quizzes`);
-    };
 
     // Retrieving details for a quiz
     const fetchQuizDetails = async () => {
         try {
-            const details = await findQuizDetails(cid as string, qid);
-            setCurrQuiz(details);
+            const details = await client.findQuizDetails(cid as string, qid);
+            dispatch(setQuizDetails(details));
         } catch (error) {
             console.error("Failed to fetch quiz details:", error);
         }
@@ -113,8 +35,134 @@ export default function EditorDetail() {
         fetchQuizDetails();
     }, [cid, qid]);
 
+
+    // // default values for all inputs
+    // const defaultQuiz = currQuiz ? currQuiz : {
+    //     title: "Unnamed quiz",
+    //     description: "",
+    //     quiz_type: "Graded Quiz",
+    //     points: "",
+    //     assignment_group: "Quizzes",
+    //     shuffle_answers: "Yes",
+    //     time_limit: "Yes",
+    //     how_long: "20",
+    //     multiple_attempts: "No",
+    //     how_many_attempts: "1",
+    //     show_correct_answers: "Immediately",
+    //     access_code: "No",
+    //     access_code_number: "",
+    //     one_question_at_a_time: "Yes",
+    //     webcam_required: "No",
+    //     lock_questions_after_answering: "No",
+    //     due_date: new Date().toISOString().slice(0, 10) + "T00:00",
+    //     available_date: new Date().toISOString().slice(0, 10) + "T00:00",
+    //     until_date: new Date().toISOString().slice(0, 10) + "T00:00",
+    // };
+    // const [quiz, setQuiz] = useState(defaultQuiz);
+
+    // // Handle form input changes
+    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    //     const { name, value } = e.target;
+    //     setQuiz((prevQuiz: any) => ({
+    //         ...prevQuiz,
+    //         [name]: value
+    //     }));
+    // };
+
+    // // Handle checkbox changes
+    // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, checked } = e.target;
+    //     setQuiz((prevQuiz: any) => ({
+    //         ...prevQuiz,
+    //         [name]: checked ? "Yes" : "No"
+    //     }));
+    // };
+
+
+    // const defaultTitle = currQuiz ? currQuiz.title : "Unnamed quiz";
+    // const defaultDescription = currQuiz ? currQuiz.description : "";
+    // const defaultQuizType = currQuiz ? currQuiz.quiz_type : "Graded Quiz";
+    // const defaultPoints = currQuiz ? currQuiz.points : "";
+    // const defaultAssignmentGroup = currQuiz ? currQuiz.assignment_group : "Quizzes";
+    // const defaultShuffleAnswers = currQuiz ? currQuiz.shuffle_answers : "Yes";
+    // const defaultTimeLimit = currQuiz ? currQuiz.time_limit : "Yes";
+    // const defaultHowLong = currQuiz ? currQuiz.how_long : "20";
+    // const defaultMultipleAttempts = currQuiz ? currQuiz.multiple_attempts : "No";
+    // const defaultHowManyAttempts = currQuiz ? currQuiz.how_many_attempts : "1";
+    // const defaultShowCorrectAnswers = currQuiz ? currQuiz.show_correct_answers : "Immediately";
+    // const defaultAccessCode = currQuiz ? currQuiz.access_code : "No";
+    // const defaultAccessCodeNumber = currQuiz ? currQuiz.access_code_number : "";
+    // const defaultOneQuestionAtATime = currQuiz ? currQuiz.one_question_at_a_time : "Yes";
+    // const defaultWebcamRequired = currQuiz ? currQuiz.webcam_required : "No";
+    // const defaultLockQuestionsAfterAnswering = currQuiz ? currQuiz.lock_questions_after_answering : "No";
+    // const defaultDueDate = currQuiz ? currQuiz.due_date : currentDate.toISOString().slice(0, 10) + "T00:00";
+    // const defaultAvailableDate = currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00";
+    // const defaultAvailableUntil = currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00";
+
+    const currentDate = new Date();
+    const [title, setTitle] = useState(currQuiz ? currQuiz.title : "Unnamed quiz");
+    const [description, setDescription] = useState(currQuiz ? currQuiz.description : "");
+    const [quizType, setQuizType] = useState(currQuiz ? currQuiz.quiz_type : "Graded Quiz");
+    const [points, setPoints] = useState(currQuiz ? currQuiz.points : "");
+    const [assignmentGroup, setAssignmentGroup] = useState(currQuiz ? currQuiz.assignment_group : "Quizzes");
+
+    const [isShuffleAnswers, setIsShuffleAnswers] = useState(currQuiz ? currQuiz.shuffle_answers : "Yes");
+    const [isTimeLimit, setIsTimeLimit] = useState(currQuiz ? currQuiz.time_limit : "Yes");
+    const [howLong, setHowLong] = useState(currQuiz ? currQuiz.how_long : "20");
+    const [isMutipleAttempts, setIsMutipleAttempts] = useState(currQuiz ? currQuiz.multiple_attempts : "No");
+    const [howManyAttempts, setHowManyAttempts] = useState(currQuiz ? currQuiz.how_many_attempts : "1");
+    const [showCorrectAnswers, setShowCorrectAnswers] = useState(currQuiz ? currQuiz.show_correct_answers : "Immediately");
+    const [isAccessCode, setIsAccessCode] = useState(currQuiz ? currQuiz.access_code : "No");
+    const [accessCodeNumber, setAccessCodeNumber] = useState(currQuiz ? currQuiz.access_code_number : "");
+
+    const [isOneQuestionAtATime, setIsOneQuestionAtATime] = useState(currQuiz ? currQuiz.one_question_at_a_time : "Yes");
+    const [isWebcamRequired, setIsWebcamRequired] = useState(currQuiz ? currQuiz.webcam_required : "No");
+    const [isLockQuestionsAfterAnswering, setIsLockQuestionsAfterAnswering] = useState(currQuiz ? currQuiz.lock_questions_after_answering : "No");
+
+    const [dueDate, setDueDate] = useState(currQuiz ? currQuiz.due_date : currentDate.toISOString().slice(0, 10) + "T00:00");
+    const [availableDate, setAvailableDate] = useState(currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00");
+    const [availableUntil, setAvailableUntil] = useState(currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00");
+
+    
+    const quiz = {
+        _id: isEdit ? qid : Date.now().toString(),
+        course: cid,
+        title: title,
+        description: description,
+        quiz_type: quizType,
+        points: points,
+        assignment_group: assignmentGroup,
+        shuffle_answers: isShuffleAnswers,
+        time_limit: isTimeLimit,
+        how_long: howLong,
+        multiple_attempts: isMutipleAttempts,
+        how_many_attempts: howManyAttempts,
+        show_correct_answers: showCorrectAnswers,
+        access_code: isAccessCode,
+        access_code_number: accessCodeNumber,
+        one_question_at_a_time: isOneQuestionAtATime,
+        webcam_required: isWebcamRequired,
+        lock_questions_after_answering: isLockQuestionsAfterAnswering,
+        due_date: dueDate,
+        available_date: availableDate,
+        until_date: availableUntil,
+    };
+
+    // Update or create a quiz
+    const savaQuiz = async () => {
+        if (isEdit) {
+            await client.updateQuiz(quiz);
+            dispatch(editQuiz(quiz));
+        }
+        else {
+            const newQuiz = await client.createQuiz(cid as string, quiz);
+            dispatch(addQuiz(newQuiz));
+        }
+        navigate(`/Kanbas/Courses/${cid}/Quizzes`);
+    }
+
     return (
-        <form onSubmit={handleSave}>
+        <form onSubmit={(e) => { e.preventDefault(); savaQuiz(); }}>
             <div id="wd-quiz-editor" className="p-4">
                 <div className="d-flex justify-content-end mb-1">
                     <div className="text-nowrap">
@@ -298,6 +346,7 @@ export default function EditorDetail() {
                                     )}
                                 </div>
 
+
                                 {/* Show Correct Answers */}
                                 <div className="form-group d-flex mt-3 align-items-center">
                                     <label htmlFor="wd-show-correct-answers" className="me-4">
@@ -440,8 +489,7 @@ export default function EditorDetail() {
                                                 className="form-control"
                                                 id="wd-quiz-available-until"
                                                 value={availableUntil}
-                                                onChange={(e) => setAvailableUntil(e.target.value)}
-                                            />
+                                                onChange={(e) => setAvailableUntil(e.target.value)} />
                                         </div>
                                     </div>
                                 </div>
@@ -458,7 +506,7 @@ export default function EditorDetail() {
                     </Link>
 
                     <button
-                        onClick={handleSave}
+                        onClick={savaQuiz}
                         type="submit"
                         className="btn btn-danger"
                     >
