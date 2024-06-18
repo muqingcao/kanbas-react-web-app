@@ -4,7 +4,6 @@ import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import { useParams } from "react-router";
-import * as db from "../../Database";
 import { setModules, addModule, editModule, updateModule, deleteModule } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import * as client from "./client";
@@ -14,6 +13,7 @@ export default function Modules() {
     const [moduleName, setModuleName] = useState("");
     const { modules } = useSelector((state: any) => state.modulesReducer);
     const dispatch = useDispatch();
+    const [refreshModules, setRefreshModules] = useState(false);
 
     // Update a Module
     const saveModule = async (module: any) => {
@@ -27,12 +27,6 @@ export default function Modules() {
         dispatch(deleteModule(moduleId));
     };
 
-    // Creating Modules for a Course
-    const createModule = async (module: any) => {
-        const newModule = await client.createModule(cid as string, module);
-        dispatch(addModule(newModule));
-    };
-
     // Retrieving Modules for Course
     const fetchModules = async () => {
         const modules = await client.findModulesForCourse(cid as string);
@@ -40,7 +34,18 @@ export default function Modules() {
     };
     useEffect(() => {
         fetchModules();
-    }, []);
+        if (refreshModules) {
+            fetchModules();
+            setRefreshModules(false); 
+        }
+    }, [refreshModules, dispatch]);
+
+    // Creating Modules for a Course
+    const createModule = async (module: any) => {
+        const newModule = await client.createModule(cid as string, module);
+        dispatch(addModule(newModule));
+        setRefreshModules(true);
+    };
 
     return (
         <div id="wd-modules">
