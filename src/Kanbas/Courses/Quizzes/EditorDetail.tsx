@@ -17,9 +17,6 @@ export default function EditorDetail() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-
-
-
     // const allQuizzes = useSelector((state: any) => state.quizReducer ? state.quizReducer.quizzes : []);
     // const currQuiz = allQuizzes.find((quiz: any) => quiz.course === cid && quiz._id === qid);
 
