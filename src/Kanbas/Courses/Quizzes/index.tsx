@@ -63,7 +63,8 @@ export default function Quizzes() {
         navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`);
     };
 
-    const handleDeleteClick = (quiz: any) => {
+    const handleDeleteClick = async (quiz: any) => {
+        await client.deleteQuiz(quiz._id);
         dispatch(deleteQuiz(quiz._id));
         setShowModal(false);
     };
@@ -123,7 +124,7 @@ export default function Quizzes() {
                                         <div className="flex-grow-1" style={{ margin: '0 20px' }}>
                                             <Link id="quiz-link" to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
                                                 style={{ color: 'black', textDecoration: 'none', fontWeight: 'bold' }}>
-                                                {quiz.number} - {quiz.title}
+                                                {quiz.title}
                                             </Link>
                                             <br />
                                             <span id="quiz-details">
@@ -146,10 +147,10 @@ export default function Quizzes() {
                                         </div>
                                         <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" keyboard={false}>
                                             <Modal.Header closeButton>
-                                                <Modal.Title>Delete Assignment</Modal.Title>
+                                                <Modal.Title>Delete Quiz</Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body>
-                                                Are you sure you want to remove the assignment?
+                                                Are you sure you want to remove this quiz?
                                             </Modal.Body>
                                             <Modal.Footer>
                                                 <Button variant="secondary" onClick={() => setShowModal(false)}>

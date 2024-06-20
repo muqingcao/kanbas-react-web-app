@@ -8,20 +8,31 @@ import { useEffect, useState } from "react";
 import store from "./store";
 import { Provider } from "react-redux";
 import * as client from "./Courses/client";
+import * as enrollmentClient from "./Courses/Enrollments/client";
 import Account from "./Account";
 import Session from "./Account/Session";
 import ProtectedRoute from "./ProtectedRoute";
+import AllCourses from "./Dashboard/AllCourses";
 
 export default function Kanbas() {
     const [courses, setCourses] = useState<any[]>([]);
+    const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
 
     // Retrieving Courses
     const fetchCourses = async () => {
         const courses = await client.fetchAllCourses();
         setCourses(courses);
     };
+
+    // Retrieving enrolled Courses
+    const fetchEnrolledCourses = async () => {
+        const courses = await enrollmentClient.findMyEnrollments();
+        setEnrolledCourses(courses);
+    };
+
     useEffect(() => {
         fetchCourses();
+        fetchEnrolledCourses();
     }, []);
 
     const [course, setCourse] = useState<any>({
@@ -62,6 +73,19 @@ export default function Kanbas() {
         );
     };
 
+    // Enrolling in a Course
+    const enrollInCourse = async (courseId: string) => {
+        await enrollmentClient.createEnrollment(courseId);
+        fetchEnrolledCourses();
+    };
+
+    // Unenrolling from a Course
+    const unenrollFromCourse = async (courseId: string) => {
+        await enrollmentClient.deleteEnrollment(courseId);
+        fetchEnrolledCourses();
+    };
+
+
     return (
         <Provider store={store}>
             <Session>
@@ -82,8 +106,18 @@ export default function Kanbas() {
                                             setCourse={setCourse}
                                             addNewCourse={addNewCourse}
                                             deleteCourse={deleteCourse}
-                                            updateCourse={updateCourse} />
+                                            updateCourse={updateCourse}
+                                            enrollInCourse={enrollInCourse}
+                                            unenrollFromCourse={unenrollFromCourse}
+                                            enrolledCourses={enrolledCourses}
+                                        />
                                     </ProtectedRoute>
+                                } />
+                                <Route path="/AllCourses" element={
+                                    <AllCourses
+                                        courses={courses}
+                                        enrollInCourse={enrollInCourse}
+                                    />
                                 } />
                                 <Route path="Courses/:cid/*" element={
                                     <ProtectedRoute>

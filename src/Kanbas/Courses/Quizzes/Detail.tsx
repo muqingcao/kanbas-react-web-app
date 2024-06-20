@@ -59,7 +59,7 @@ export default function Detail() {
             </div>
             <hr />
 
-            <h1 id="quiz-title">{currQuiz?.number} - {currQuiz?.title}</h1>
+            <h1 id="quiz-title">{currQuiz?.title}</h1>
             <div id="quiz-type" className="row mt-4">
                 <div className="col-4" style={{ textAlign: "right", fontWeight: 'bold' }}>
                     Quiz Type

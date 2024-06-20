@@ -21,7 +21,6 @@ export default function EditorDetail() {
     const allQuizzes = useSelector((state: any) => state.quizzesReducer ? state.quizzesReducer.quizzes : []);
     const currQuiz = allQuizzes.find((quiz: any) => quiz.course === cid && quiz._id === qid);
 
-
     // Retrieving details for a quiz
     const fetchQuizDetails = async () => {
         try {
@@ -32,72 +31,10 @@ export default function EditorDetail() {
         }
     };
     useEffect(() => {
-        fetchQuizDetails();
+        if (isEdit) {
+            fetchQuizDetails();
+        }
     }, [cid, qid]);
-
-
-    // // default values for all inputs
-    // const defaultQuiz = currQuiz ? currQuiz : {
-    //     title: "Unnamed quiz",
-    //     description: "",
-    //     quiz_type: "Graded Quiz",
-    //     points: "",
-    //     assignment_group: "Quizzes",
-    //     shuffle_answers: "Yes",
-    //     time_limit: "Yes",
-    //     how_long: "20",
-    //     multiple_attempts: "No",
-    //     how_many_attempts: "1",
-    //     show_correct_answers: "Immediately",
-    //     access_code: "No",
-    //     access_code_number: "",
-    //     one_question_at_a_time: "Yes",
-    //     webcam_required: "No",
-    //     lock_questions_after_answering: "No",
-    //     due_date: new Date().toISOString().slice(0, 10) + "T00:00",
-    //     available_date: new Date().toISOString().slice(0, 10) + "T00:00",
-    //     until_date: new Date().toISOString().slice(0, 10) + "T00:00",
-    // };
-    // const [quiz, setQuiz] = useState(defaultQuiz);
-
-    // // Handle form input changes
-    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    //     const { name, value } = e.target;
-    //     setQuiz((prevQuiz: any) => ({
-    //         ...prevQuiz,
-    //         [name]: value
-    //     }));
-    // };
-
-    // // Handle checkbox changes
-    // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const { name, checked } = e.target;
-    //     setQuiz((prevQuiz: any) => ({
-    //         ...prevQuiz,
-    //         [name]: checked ? "Yes" : "No"
-    //     }));
-    // };
-
-
-    // const defaultTitle = currQuiz ? currQuiz.title : "Unnamed quiz";
-    // const defaultDescription = currQuiz ? currQuiz.description : "";
-    // const defaultQuizType = currQuiz ? currQuiz.quiz_type : "Graded Quiz";
-    // const defaultPoints = currQuiz ? currQuiz.points : "";
-    // const defaultAssignmentGroup = currQuiz ? currQuiz.assignment_group : "Quizzes";
-    // const defaultShuffleAnswers = currQuiz ? currQuiz.shuffle_answers : "Yes";
-    // const defaultTimeLimit = currQuiz ? currQuiz.time_limit : "Yes";
-    // const defaultHowLong = currQuiz ? currQuiz.how_long : "20";
-    // const defaultMultipleAttempts = currQuiz ? currQuiz.multiple_attempts : "No";
-    // const defaultHowManyAttempts = currQuiz ? currQuiz.how_many_attempts : "1";
-    // const defaultShowCorrectAnswers = currQuiz ? currQuiz.show_correct_answers : "Immediately";
-    // const defaultAccessCode = currQuiz ? currQuiz.access_code : "No";
-    // const defaultAccessCodeNumber = currQuiz ? currQuiz.access_code_number : "";
-    // const defaultOneQuestionAtATime = currQuiz ? currQuiz.one_question_at_a_time : "Yes";
-    // const defaultWebcamRequired = currQuiz ? currQuiz.webcam_required : "No";
-    // const defaultLockQuestionsAfterAnswering = currQuiz ? currQuiz.lock_questions_after_answering : "No";
-    // const defaultDueDate = currQuiz ? currQuiz.due_date : currentDate.toISOString().slice(0, 10) + "T00:00";
-    // const defaultAvailableDate = currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00";
-    // const defaultAvailableUntil = currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00";
 
     const currentDate = new Date();
     const [title, setTitle] = useState(currQuiz ? currQuiz.title : "Unnamed quiz");
@@ -123,7 +60,7 @@ export default function EditorDetail() {
     const [availableDate, setAvailableDate] = useState(currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00");
     const [availableUntil, setAvailableUntil] = useState(currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00");
 
-    
+
     const quiz = {
         _id: isEdit ? qid : Date.now().toString(),
         course: cid,
@@ -134,12 +71,15 @@ export default function EditorDetail() {
         assignment_group: assignmentGroup,
         shuffle_answers: isShuffleAnswers,
         time_limit: isTimeLimit,
-        how_long: howLong,
+        ...(isTimeLimit === "Yes" && { how_long: howLong }),
+
         multiple_attempts: isMutipleAttempts,
-        how_many_attempts: howManyAttempts,
+        ...(isMutipleAttempts === "Yes" && { how_many_attempts: howManyAttempts }),
+
         show_correct_answers: showCorrectAnswers,
         access_code: isAccessCode,
-        access_code_number: accessCodeNumber,
+        ...(isAccessCode === "Yes" && { access_code_number: accessCodeNumber }),
+
         one_question_at_a_time: isOneQuestionAtATime,
         webcam_required: isWebcamRequired,
         lock_questions_after_answering: isLockQuestionsAfterAnswering,
@@ -149,7 +89,7 @@ export default function EditorDetail() {
     };
 
     // Update or create a quiz
-    const savaQuiz = async () => {
+    const handleSavaQuiz = async () => {
         if (isEdit) {
             await client.updateQuiz(quiz);
             dispatch(editQuiz(quiz));
@@ -162,7 +102,7 @@ export default function EditorDetail() {
     }
 
     return (
-        <form onSubmit={(e) => { e.preventDefault(); savaQuiz(); }}>
+        <form onSubmit={(e) => { e.preventDefault(); handleSavaQuiz(); }}>
             <div id="wd-quiz-editor" className="p-4">
                 <div className="d-flex justify-content-end mb-1">
                     <div className="text-nowrap">
@@ -176,7 +116,7 @@ export default function EditorDetail() {
                         </div>
 
                         <div id="quiz-points" className="float-end py-2" >
-                            Points 0
+                            Points {points}
                         </div>
                     </div>
                 </div>
@@ -219,13 +159,17 @@ export default function EditorDetail() {
                                 Quiz Type
                             </label>
                             <div className="col-sm-9">
-                                <input
-                                    type="text"
-                                    className="form-control"
+                                <select
+                                    className="form-select"
                                     id="wd-quiz-type"
                                     value={quizType}
                                     onChange={(e) => setQuizType(e.target.value)}
-                                />
+                                >
+                                    <option value="Graded Quiz">Graded Quiz</option>
+                                    <option value="Practice Quiz">Practice Quiz</option>
+                                    <option value="Graded Survey">Graded Survey</option>
+                                    <option value="Ungraded Survey">Ungraded Survey</option>
+                                </select>
                             </div>
                         </div>
 
@@ -506,7 +450,6 @@ export default function EditorDetail() {
                     </Link>
 
                     <button
-                        onClick={savaQuiz}
                         type="submit"
                         className="btn btn-danger"
                     >
