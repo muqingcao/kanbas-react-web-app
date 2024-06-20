@@ -25,7 +25,7 @@ export default function AllCourses({ courses, enrollInCourse }: { courses: any[]
                                         <button
                                             onClick={() => {
                                                 enrollInCourse(course._id);
-                                                navigate('/dashboard');
+                                                navigate('../Dashboard');
                                             }}
                                             className="btn btn-success float-end"
                                         >

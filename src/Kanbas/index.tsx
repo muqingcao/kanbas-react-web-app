@@ -85,7 +85,6 @@ export default function Kanbas() {
         fetchEnrolledCourses();
     };
 
-
     return (
         <Provider store={store}>
             <Session>
@@ -113,7 +112,7 @@ export default function Kanbas() {
                                         />
                                     </ProtectedRoute>
                                 } />
-                                <Route path="/AllCourses" element={
+                                <Route path="AllCourses" element={
                                     <AllCourses
                                         courses={courses}
                                         enrollInCourse={enrollInCourse}

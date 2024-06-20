@@ -2,7 +2,6 @@ import './styles.css';
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as client from "../Courses/client";
-import * as enrollmentClient from "../Courses/Enrollments/client";
 
 export default function Dashboard({
     courses,
@@ -31,22 +30,6 @@ export default function Dashboard({
         const courses = await client.fetchPublishedCourses();
         setPublishedCourses(courses);
     };
-
-    // // fetch all the enrolled courses
-    // const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
-    // const fetchEnrolledCourses = async () => {
-    //     const courses = await enrollmentClient.findMyEnrollments();
-    //     setEnrolledCourses(courses);
-    // };
-    // const enrollInCourse = async (courseId: string) => {
-    //     await enrollmentClient.createEnrollment(courseId);
-    //     fetchEnrolledCourses();
-    // };
-    // const unenrollFromCourse = async (courseId: string) => {
-    //     await enrollmentClient.deleteEnrollment(courseId);
-    //     fetchEnrolledCourses();
-    // };
-
     useEffect(() => {
         fetchPublishedCourses();
         // fetchEnrolledCourses();
@@ -55,8 +38,9 @@ export default function Dashboard({
     // view all courses button
     const navigate = useNavigate();
     const handleViewAllCourses = () => {
-        navigate('/AllCourses', { state: { courses, enrollInCourse } });
+        navigate('../AllCourses', { state: { courses } });
     };
+    
 
     return (
         <div className="p-4" id="wd-dashboard">
@@ -133,9 +117,10 @@ export default function Dashboard({
             <br />
             <br />
 
-            <button onClick={handleViewAllCourses} className="btn btn-secondary">
+            <button onClick={handleViewAllCourses} className="btn btn-warning btn-warning float-end">
                 View All Courses
             </button>
+
             <h2 id="wd-dashboard-published">
                 Enrolled Courses ({enrolledCourses.length})
             </h2>
