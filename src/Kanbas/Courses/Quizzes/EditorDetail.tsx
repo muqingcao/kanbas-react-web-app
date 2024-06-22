@@ -8,6 +8,7 @@ import { addQuiz, editQuiz } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import * as client from "./client";
 import { setQuizDetails } from './reducer';
+import Editor from 'react-simple-wysiwyg';
 
 export default function EditorDetail() {
     const { pathname } = useLocation();
@@ -60,6 +61,7 @@ export default function EditorDetail() {
     const [availableDate, setAvailableDate] = useState(currQuiz ? currQuiz.available_date : currentDate.toISOString().slice(0, 10) + "T00:00");
     const [availableUntil, setAvailableUntil] = useState(currQuiz ? currQuiz.until_date : currentDate.toISOString().slice(0, 10) + "T00:00");
 
+    const [isPublished, setIsPublished] = useState(currQuiz ? currQuiz.published : "Unpublished");
 
     const quiz = {
         _id: isEdit ? qid : Date.now().toString(),
@@ -86,6 +88,7 @@ export default function EditorDetail() {
         due_date: dueDate,
         available_date: availableDate,
         until_date: availableUntil,
+        published: isPublished,
     };
 
     // Update or create a quiz
@@ -100,6 +103,27 @@ export default function EditorDetail() {
         }
         navigate(`/Kanbas/Courses/${cid}/Quizzes`);
     }
+
+    // handle save and publish button at the bottom
+    const handleSaveAndPublish = async () => {
+        const quizToSave = {
+            ...quiz,
+            published: "Published",
+        };
+
+        try {
+            if (isEdit) {
+                await client.updateQuiz(quizToSave);
+                dispatch(editQuiz(quizToSave));
+            } else {
+                const newQuiz = await client.createQuiz(cid as string, quizToSave);
+                dispatch(addQuiz(newQuiz));
+            }
+            navigate(`/Kanbas/Courses/${cid}/Quizzes`);
+        } catch (error) {
+            console.error("Error saving and publishing quiz:", error);
+        }
+    };
 
     return (
         <form onSubmit={(e) => { e.preventDefault(); handleSavaQuiz(); }}>
@@ -141,12 +165,10 @@ export default function EditorDetail() {
                         <label htmlFor="quiz-description" className="form-label">
                             <b>Quiz Instructions</b>
                         </label>
-                        <textarea
+                        <Editor
                             id="quiz-description"
-                            className="form-control"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            style={{ minHeight: '100px', padding: '15px' }}
                         />
                     </div>
                 </div>
@@ -213,90 +235,32 @@ export default function EditorDetail() {
                             <label htmlFor="wd-quiz-options" className="col-sm-3 col-form-label" style={{ textAlign: 'right' }}>
                                 Options
                             </label>
-                            <div className="col-sm-9 align-items-center">
+                            <div className="col-sm-9 row align-items-center">
 
                                 {/* Shuffle Answers  */}
-                                <div className="mt-2">
-                                    <input
-                                        type="checkbox"
-                                        id="wd-quiz-shuffle-answers"
-                                        checked={isShuffleAnswers === "Yes"}
-                                        onChange={() => { setIsShuffleAnswers(isShuffleAnswers === "Yes" ? "No" : "Yes") }}
-                                        className="me-2"
-                                    />
-                                    <label htmlFor="wd-quiz-shuffle-answers">
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-quiz-shuffle-answers" className="col-sm-5 col-form-label">
                                         Shuffle Answers
                                     </label>
+                                    <div className="col-sm-4 position-relative">
+                                        <select
+                                            className="form-select"
+                                            id="wd-quiz-shuffle-answers"
+                                            value={isShuffleAnswers}
+                                            onChange={(e) => setIsShuffleAnswers(e.target.value)}
+                                        >
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
                                 </div>
-
-                                {/* Time Limit */}
-                                <div className="text-nowrap d-flex mt-3 align-items-center">
-                                    <div className="d-flex">
-                                        <input
-                                            type="checkbox"
-                                            id="wd-quiz-time-limit"
-                                            checked={isTimeLimit === "Yes"}
-                                            onChange={() => { setIsTimeLimit(isTimeLimit === "Yes" ? "No" : "Yes") }}
-                                            className="me-2 d-flex"
-                                        />
-                                    </div>
-                                    <div className="d-flex me-4">
-                                        <label htmlFor="wd-quiz-time-limit">
-                                            Time Limit
-                                        </label>
-                                    </div>
-                                    {isTimeLimit === "Yes" && (
-                                        <div className="input-group mb-3 d-flex">
-                                            <input
-                                                type="text"
-                                                className="form-control ms-2"
-                                                placeholder="Enter number"
-                                                value={howLong}
-                                                onChange={(e) => setHowLong(e.target.value)}
-                                            />
-                                            <span className="input-group-text">minutes</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Multiple Attempts */}
-                                <div className="text-nowrap d-flex mt-3 align-items-center">
-                                    <div className="d-flex">
-                                        <input
-                                            type="checkbox"
-                                            id="wd-quiz-multiple-attempts"
-                                            checked={isMutipleAttempts === "Yes"}
-                                            onChange={() => { setIsMutipleAttempts(isMutipleAttempts === "Yes" ? "No" : "Yes") }}
-                                            className="me-2 d-flex"
-                                        />
-                                    </div>
-                                    <div className="d-flex me-4">
-                                        <label htmlFor="wd-quiz-multiple-attempts">
-                                            Mutiple Attempts
-                                        </label>
-                                    </div>
-
-                                    {isMutipleAttempts === "Yes" && (
-                                        <div className="input-group mb-3 d-flex">
-                                            <input
-                                                type="text"
-                                                className="form-control ms-2"
-                                                placeholder="Enter number"
-                                                value={howManyAttempts}
-                                                onChange={(e) => setHowManyAttempts(e.target.value)}
-                                            />
-                                            <span className="input-group-text">times</span>
-                                        </div>
-                                    )}
-                                </div>
-
 
                                 {/* Show Correct Answers */}
-                                <div className="form-group d-flex mt-3 align-items-center">
-                                    <label htmlFor="wd-show-correct-answers" className="me-4">
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-show-correct-answers" className="col-sm-5 col-form-label">
                                         Show Correct Answers
                                     </label>
-                                    <div className="position-relative">
+                                    <div className="col-sm-4 position-relative">
                                         <select
                                             className="form-select"
                                             id="wd-show-correct-answers"
@@ -310,77 +274,164 @@ export default function EditorDetail() {
                                     </div>
                                 </div>
 
-                                {/* Access Code */}
-                                <div className="text-nowrap d-flex mt-3 align-items-center">
-                                    <div className="d-flex">
-                                        <input
-                                            type="checkbox"
-                                            id="wd-quiz-access-code"
-                                            checked={isAccessCode === "Yes"}
-                                            onChange={() => { setIsAccessCode(isAccessCode === "Yes" ? "No" : "Yes") }}
-                                            className="me-2 d-flex"
-                                        />
+
+                                {/* One Question at a Time */}
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-one-question-at-a-time" className="col-sm-5 col-form-label">
+                                        One Question at a Time
+                                    </label>
+                                    <div className="col-sm-4 position-relative">
+                                        <select
+                                            className="form-select"
+                                            id="wd-one-question-at-a-time"
+                                            value={isOneQuestionAtATime}
+                                            onChange={(e) => setIsOneQuestionAtATime(e.target.value)}
+                                        >
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
                                     </div>
-                                    <div className="d-flex me-4">
-                                        <label htmlFor="wd-quiz-access-code">
-                                            Access Code
-                                        </label>
+                                </div>
+
+
+                                {/* Webcam Required */}
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-webcam-required" className="col-sm-5 col-form-label">
+                                        Webcam Required
+                                    </label>
+                                    <div className="col-sm-4 position-relative">
+                                        <select
+                                            className="form-select"
+                                            id="wd-webcam-required"
+                                            value={isWebcamRequired}
+                                            onChange={(e) => setIsWebcamRequired(e.target.value)}
+                                        >
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+                                {/* Lock Questions After Answering */}
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-lock-questions-after-answering" className="col-sm-5 col-form-label">
+                                        Lock Questions After Answering
+                                    </label>
+                                    <div className="col-sm-4 position-relative">
+                                        <select
+                                            className="form-select"
+                                            id="wd-lock-questions-after-answering"
+                                            value={isLockQuestionsAfterAnswering}
+                                            onChange={(e) => setIsLockQuestionsAfterAnswering(e.target.value)}
+                                        >
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                {/* Time Limit */}
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-quiz-time-limit" className="col-sm-3 col-form-label">
+                                        Time Limit
+                                    </label>
+                                    <div className="col-sm-3">
+                                        <select
+                                            className="form-select"
+                                            id="wd-quiz-time-limit"
+                                            value={isTimeLimit}
+                                            onChange={(e) => setIsTimeLimit(e.target.value)}
+                                        >
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
                                     </div>
 
-                                    {isAccessCode === "Yes" && (
-                                        <div className="mt-2 d-flex">
-                                            <input
-                                                type="text"
-                                                className="form-control ms-2"
-                                                placeholder="Enter your code"
-                                                value={accessCodeNumber}
-                                                onChange={(e) => setAccessCodeNumber(e.target.value)}
-                                            />
+                                    {isTimeLimit === "Yes" && (
+                                        <div className="col-sm-4">
+                                            <div className="input-group">
+                                                <input
+                                                    type="text"
+                                                    className="form-control ms-2 "
+                                                    placeholder="Enter number"
+                                                    value={howLong}
+                                                    onChange={(e) => setHowLong(e.target.value)}
+                                                />
+                                                <span className="input-group-text">mins</span>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* One Question at a Time */}
-                                <div className="mt-3">
-                                    <input
-                                        type="checkbox"
-                                        id="wd-one-question-at-a-time"
-                                        checked={isOneQuestionAtATime === "Yes"}
-                                        onChange={() => { setIsOneQuestionAtATime(isOneQuestionAtATime === "Yes" ? "No" : "Yes") }}
-                                        className="me-2"
-                                    />
-                                    <label htmlFor="wd-one-question-at-a-time">
-                                        One Question at a Time
+
+                                {/* Multiple Attempts */}
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-quiz-multiple-attempts" className="col-sm-3 col-form-label">
+                                        Mutiple Attempts
                                     </label>
+                                    <div className="col-sm-3">
+                                        <select
+                                            className="form-select"
+                                            id="wd-quiz-multiple-attempts"
+                                            value={isMutipleAttempts}
+                                            onChange={(e) => setIsMutipleAttempts(e.target.value)}
+                                        >
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+
+                                    {isMutipleAttempts === "Yes" && (
+                                        <div className="col-sm-4">
+                                            <div className="input-group">
+                                                <input
+                                                    type="text"
+                                                    className="form-control ms-2"
+                                                    placeholder="Enter number"
+                                                    value={howManyAttempts}
+                                                    onChange={(e) => setHowManyAttempts(e.target.value)}
+                                                />
+                                                <span className="input-group-text">times</span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Webcam Required */}
-                                <div className="mt-3">
-                                    <input
-                                        type="checkbox"
-                                        id="wd-webcam-required"
-                                        checked={isWebcamRequired === "Yes"}
-                                        onChange={() => { setIsWebcamRequired(isWebcamRequired === "Yes" ? "No" : "Yes") }}
-                                        className="me-2"
-                                    />
-                                    <label htmlFor="wd-webcam-required">
-                                        Webcam Required
+                                {/* Access Code */}
+                                <div className="row mb-3">
+                                    <label htmlFor="wd-quiz-access-code" className="col-sm-3 col-form-label">
+                                        Access Code
                                     </label>
+                                    <div className="col-sm-3">
+                                        <select
+                                            className="form-select"
+                                            id="wd-quiz-access-code"
+                                            value={isAccessCode}
+                                            onChange={(e) => setIsAccessCode(e.target.value)}
+                                        >
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+
+                                    {isAccessCode === "Yes" && (
+                                        <div className="col-sm-4">
+                                            <div className="input-group">
+                                                <input
+                                                    type="text"
+                                                    className="form-control ms-2 "
+                                                    placeholder="Enter number"
+                                                    value={accessCodeNumber}
+                                                    onChange={(e) => setAccessCodeNumber(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Lock Questions After Answering */}
-                                <div className="mt-3">
-                                    <input
-                                        type="checkbox"
-                                        id="wd-lock-questions-after-answering"
-                                        checked={isLockQuestionsAfterAnswering === "Yes"}
-                                        onChange={() => { setIsLockQuestionsAfterAnswering(isLockQuestionsAfterAnswering === "Yes" ? "No" : "Yes") }}
-                                        className="me-2"
-                                    />
-                                    <label htmlFor="wd-lock-questions-after-answering">
-                                        Lock Questions After Answering
-                                    </label>
-                                </div>
                             </div>
                         </div>
 
@@ -444,16 +495,24 @@ export default function EditorDetail() {
                 <hr />
                 <div className="d-flex justify-content-end">
                     <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
-                        <button type="button" className="btn btn-light border me-2 board">
+                        <button type="button" className="btn btn-light border me-2">
                             Cancel
                         </button>
                     </Link>
 
                     <button
                         type="submit"
-                        className="btn btn-danger"
+                        className="btn btn-danger me-2"
                     >
                         Save
+                    </button>
+
+                    <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={handleSaveAndPublish}
+                    >
+                        Save and Publish
                     </button>
                 </div>
             </div >

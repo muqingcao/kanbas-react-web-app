@@ -9,6 +9,7 @@ import store from "./store";
 import { Provider } from "react-redux";
 import * as client from "./Courses/client";
 import * as enrollmentClient from "./Courses/Enrollments/client";
+import * as acountClient from "./Account/client";
 import Account from "./Account";
 import Session from "./Account/Session";
 import ProtectedRoute from "./ProtectedRoute";
@@ -24,21 +25,63 @@ export default function Kanbas() {
         setCourses(courses);
     };
 
+
+    //  Fetch user role
+    const [userRole, setUserRole] = useState<string>("");
+    const fetchUserRole = async () => {
+        try {
+            const currentUser = await acountClient.profile();
+            console.log("Fetched user role:", currentUser);
+            setUserRole(currentUser.role);
+        } catch (error) {
+            console.error("Error fetching user role:", error);
+        }
+    };
+
     // Retrieving enrolled Courses
     const fetchEnrolledCourses = async () => {
         const courses = await enrollmentClient.findMyEnrollments();
         setEnrolledCourses(courses);
     };
 
+    // useEffect(() => {
+    //     fetchUserRole();
+    //     fetchCourses();
+    //     fetchEnrolledCourses();
+    // }, []);
+
+
+    // Fetch user and set user state
+    const [user, setUser] = useState<any>(null);
+    const fetchUser = async () => {
+        try {
+            const currentUser = await acountClient.profile();
+            console.log("Fetched user:", currentUser);
+            if (currentUser) {
+                setUser(currentUser);
+                const courses = await enrollmentClient.findMyEnrollments();
+                setEnrolledCourses(courses);
+            }
+            else {
+                setUser(null);
+                setEnrolledCourses([]);
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
+        }
+    };
+
     useEffect(() => {
         fetchCourses();
-        fetchEnrolledCourses();
+        fetchUserRole();
+        fetchUser();
     }, []);
+
 
     const [course, setCourse] = useState<any>({
         _id: "0",
         name: "New Course",
-        number: "New Number",
+        number: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         startDate: "2023-09-10",
         endDate: "2023-12-15",
         image: "/images/reactjs.jpg",
@@ -47,8 +90,17 @@ export default function Kanbas() {
 
     // Creating New Courses
     const addNewCourse = async () => {
-        const newCourse = await client.createCourse(course);
-        setCourses([...courses, newCourse]);
+        try {
+            const updatedCourse = {
+                ...course,
+                number: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+            };
+            setCourse(updatedCourse);
+            const newCourse = await client.createCourse(updatedCourse);
+            setCourses([...courses, newCourse]);
+        } catch (error) {
+            console.error("Error creating course:", error);
+        }
     };
 
     // Deleting a Course
